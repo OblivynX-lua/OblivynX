@@ -1,0 +1,812 @@
+--// OBLIVYNX HUB - FINAL VERSION
+
+-- Services
+local Players = game:GetService("Players")
+local TweenService = game:GetService("TweenService")
+local StarterGui = game:GetService("StarterGui")
+local Lighting = game:GetService("Lighting")
+local LocalPlayer = Players.LocalPlayer
+
+-- Create GUI
+local gui = Instance.new("ScreenGui")
+gui.Name = "OblivynXHub"
+gui.ResetOnSpawn = false
+gui.ZIndexBehavior = Enum.ZIndexBehavior.Global
+gui.Parent = game.CoreGui
+
+-- Blurry loading screen
+local blur = Instance.new("BlurEffect", Lighting)
+blur.Size = 0
+TweenService:Create(blur, TweenInfo.new(0.5), { Size = 24 }):Play()
+
+-- "Loading..." Text
+local loadingText = Instance.new("TextLabel", gui)
+loadingText.Text = "Loading..."
+loadingText.Font = Enum.Font.GothamBold
+loadingText.TextSize = 30
+loadingText.TextColor3 = Color3.fromRGB(255, 255, 255)
+loadingText.BackgroundTransparency = 1
+loadingText.Size = UDim2.new(1, 0, 1, 0)
+loadingText.Position = UDim2.new(0, 0, 0, 0)
+loadingText.ZIndex = 9999
+
+task.wait(1.5)
+loadingText:Destroy()
+TweenService:Create(blur, TweenInfo.new(1), { Size = 0 }):Play()
+task.delay(1, function() blur:Destroy() end)
+
+-- Main Frame
+local frame = Instance.new("Frame")
+frame.Size = UDim2.new(0, 0, 0, 0)
+frame.Position = UDim2.new(0.5, 0, 0.5, 0)
+frame.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+frame.BorderSizePixel = 0
+frame.AnchorPoint = Vector2.new(0.5, 0.5)
+frame.Active = true
+frame.Draggable = true
+frame.BackgroundTransparency = 1
+frame.Parent = gui
+
+-- Animate frame size & transparency
+TweenService:Create(frame, TweenInfo.new(0.6, Enum.EasingStyle.Back, Enum.EasingDirection.Out), {
+Size = UDim2.new(0, 500, 0, 350),
+BackgroundTransparency = 0
+}):Play()
+
+-- Corners & Stroke
+local corner = Instance.new("UICorner", frame)
+corner.CornerRadius = UDim.new(0, 10)
+
+local stroke = Instance.new("UIStroke", frame)
+stroke.Thickness = 2
+stroke.Color = Color3.fromRGB(0, 180, 255)
+
+task.spawn(function()
+while true do
+for hue = 0, 1, 0.01 do
+stroke.Color = Color3.fromHSV(hue, 1, 1)
+task.wait(0.03)
+end
+end
+end)
+
+-- 🏠 Home Icon (updated)
+local icon = Instance.new("ImageLabel", frame)
+icon.Image = "rbxassetid://6035047409" -- Home icon
+icon.Size = UDim2.new(0, 30, 0, 30)
+icon.Position = UDim2.new(0, 10, 0, 10)
+icon.BackgroundTransparency = 1
+
+-- Title
+local title = Instance.new("TextLabel", frame)
+title.Text = "OblivynX Hub"
+title.Font = Enum.Font.GothamBold
+title.TextSize = 24
+title.TextColor3 = Color3.fromRGB(255, 255, 255)
+title.BackgroundTransparency = 1
+title.Position = UDim2.new(0, 50, 0, 10)
+title.Size = UDim2.new(1, -60, 0, 30)
+title.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Welcome Notification
+StarterGui:SetCore("SendNotification", {
+Title = "Welcome!",
+Text = "Welcome, " .. LocalPlayer.Name .. "!",
+Duration = 4
+})
+
+-- Welcome Label
+local welcome = Instance.new("TextLabel", frame)
+welcome.Text = "Welcome to OblivynX Hub"
+welcome.Font = Enum.Font.GothamMedium
+welcome.TextSize = 18
+welcome.TextColor3 = Color3.fromRGB(180, 180, 255)
+welcome.BackgroundTransparency = 1
+welcome.Position = UDim2.new(0, 10, 0, 50)
+welcome.Size = UDim2.new(1, -20, 0, 25)
+welcome.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Discord Label
+local discordText = Instance.new("TextLabel", frame)
+discordText.Text = "Our Discord: https://discord.gg/7cp3chsz"
+discordText.Font = Enum.Font.GothamSemibold
+discordText.TextSize = 16
+discordText.TextColor3 = Color3.fromRGB(150, 200, 255)
+discordText.BackgroundTransparency = 1
+discordText.Position = UDim2.new(0, 10, 0, 80)
+discordText.Size = UDim2.new(1, -20, 0, 25)
+discordText.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Copy Button
+local copyBtn = Instance.new("TextButton", frame)
+copyBtn.Text = "Copy"
+copyBtn.Font = Enum.Font.GothamBold
+copyBtn.TextSize = 14
+copyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+copyBtn.BackgroundColor3 = Color3.fromRGB(50, 100, 150)
+copyBtn.Position = UDim2.new(1, -70, 0, 82)
+copyBtn.Size = UDim2.new(0, 60, 0, 20)
+
+Instance.new("UICorner", copyBtn)
+local copyStroke = Instance.new("UIStroke", copyBtn)
+copyStroke.Thickness = 1
+
+copyBtn.MouseButton1Click:Connect(function()
+setclipboard("https://discord.gg/7cp3chsz")
+StarterGui:SetCore("SendNotification", {
+Title = "Copied!",
+Text = "Discord link copied.",
+Duration = 3
+})
+end)
+
+-- Hover animation
+local function animateHover(button)
+button.MouseEnter:Connect(function()
+TweenService:Create(button, TweenInfo.new(0.2), { Size = button.Size + UDim2.new(0, 5, 0, 2) }):Play()
+end)
+button.MouseLeave:Connect(function()
+TweenService:Create(button, TweenInfo.new(0.2), { Size = button.Size - UDim2.new(0, 5, 0, 2) }):Play()
+end)
+end
+animateHover(copyBtn)
+
+-- Separator Line
+local sep = Instance.new("Frame", frame)
+sep.BackgroundColor3 = Color3.fromRGB(100, 100, 150)
+sep.Size = UDim2.new(1, -20, 0, 1)
+sep.Position = UDim2.new(0, 10, 0, 115)
+
+-- Spammer Button
+local scriptBtn = Instance.new("TextButton", frame)
+scriptBtn.Text = "Launch OblivynX Spammer Pro"
+scriptBtn.Font = Enum.Font.GothamBold
+scriptBtn.TextSize = 16
+scriptBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+scriptBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 80)
+scriptBtn.Position = UDim2.new(0.5, -140, 0, 135)
+scriptBtn.Size = UDim2.new(0, 280, 0, 40)
+
+Instance.new("UICorner", scriptBtn)
+local btnStroke = Instance.new("UIStroke", scriptBtn)
+btnStroke.Thickness = 1
+
+task.spawn(function()
+while true do
+for hue = 0, 1, 0.01 do
+btnStroke.Color = Color3.fromHSV(hue, 1, 1)
+task.wait(0.03)
+end
+end
+end)
+
+scriptBtn.MouseButton1Click:Connect(function()
+loadstring(game:HttpGet("https://pastefy.app/qsIbNQPZ/raw"))()
+end)
+
+animateHover(scriptBtn)
+
+-- Infinite Yield Button (NEW)
+local iyBtn = Instance.new("TextButton", frame)
+iyBtn.Text = "Launch Infinite Yield"
+iyBtn.Font = Enum.Font.GothamBold
+iyBtn.TextSize = 16
+iyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+iyBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 80)
+iyBtn.Position = UDim2.new(0.5, -140, 0, 185)
+iyBtn.Size = UDim2.new(0, 280, 0, 40)
+
+Instance.new("UICorner", iyBtn)
+local iyBtnStroke = Instance.new("UIStroke", iyBtn)
+iyBtnStroke.Thickness = 1
+
+task.spawn(function()
+while true do
+for hue = 0, 1, 0.01 do
+iyBtnStroke.Color = Color3.fromHSV(hue, 1, 1)
+task.wait(0.03)
+end
+end
+end)
+
+iyBtn.MouseButton1Click:Connect(function()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+end)
+
+animateHover(iyBtn)
+
+-- ❌ Close Button
+local closeBtn = Instance.new("TextButton", frame)
+closeBtn.Text = "✖"
+closeBtn.Font = Enum.Font.Gotham
+closeBtn.TextSize = 20
+closeBtn.TextColor3 = Color3.fromRGB(255, 100, 100)
+closeBtn.BackgroundColor3 = Color3.fromRGB(40, 20, 20)
+closeBtn.Position = UDim2.new(1, -35, 0, 10)
+closeBtn.Size = UDim2.new(0, 25, 0, 25)
+Instance.new("UICorner", closeBtn)
+
+closeBtn.MouseButton1Click:Connect(function()
+gui:Destroy()
+end)
+
+animateHover(closeBtn)
+
+-- 📌 Credit Label
+local creditLabel = Instance.new("TextLabel", frame)
+creditLabel.Text = "Made by louai_lol           special thanks to ilove_myselfff00 for her support"
+creditLabel.Font = Enum.Font.Gotham
+creditLabel.TextSize = 14
+creditLabel.TextColor3 = Color3.fromRGB(160, 160, 255)
+creditLabel.BackgroundTransparency = 1
+creditLabel.Position = UDim2.new(0.5, -75, 1, -25)
+creditLabel.Size = UDim2.new(0, 150, 0, 20)
+creditLabel.TextXAlignment = Enum.TextXAlignment.Center
+
+-- ▼▼▼ VISUAL ENHANCEMENTS ▼▼▼ --
+
+-- Drop shadow under GUI frame
+local dropShadow = Instance.new("Frame")
+dropShadow.BackgroundColor3 = Color3.new(0, 0, 0)
+dropShadow.BackgroundTransparency = 0.5
+dropShadow.Size = UDim2.new(0, 520, 0, 370)
+dropShadow.Position = UDim2.new(0.5, 10, 0.5, 10)
+dropShadow.AnchorPoint = Vector2.new(0.5, 0.5)
+dropShadow.BorderSizePixel = 0
+dropShadow.ZIndex = 0
+dropShadow.Parent = gui
+
+-- Sync shadow to frame
+frame:GetPropertyChangedSignal("Position"):Connect(function()
+dropShadow.Position = frame.Position + UDim2.new(0, 10, 0, 10)
+end)
+frame:GetPropertyChangedSignal("Size"):Connect(function()
+dropShadow.Size = frame.Size + UDim2.new(0, 20, 0, 20)
+end)
+
+-- Fade-in GUI on load
+gui.Enabled = false
+task.defer(function()
+gui.Enabled = true
+end)
+
+-- Pulsing glow on loading text
+local glow = Instance.new("UIStroke", loadingText)
+glow.Thickness = 2
+glow.Transparency = 0.4
+glow.Color = Color3.fromRGB(255, 255, 255)
+
+task.spawn(function()
+while loadingText and loadingText.Parent do
+TweenService:Create(glow, TweenInfo.new(0.8), { Transparency = 0.8 }):Play()
+task.wait(0.8)
+TweenService:Create(glow, TweenInfo.new(0.8), { Transparency = 0.4 }):Play()
+task.wait(0.8)
+end
+end)
+
+-- Auto-resize based on screen
+local function resizeToScreen()
+local screenSize = gui.AbsoluteSize
+local width = math.clamp(screenSize.X * 0.5, 400, 600)
+local height = math.clamp(screenSize.Y * 0.5, 300, 450)
+frame.Size = UDim2.new(0, width, 0, height)
+dropShadow.Size = UDim2.new(0, width + 20, 0, height + 20)
+end
+
+resizeToScreen()
+gui:GetPropertyChangedSignal("AbsoluteSize"):Connect(resizeToScreen)
+
+-- Hover glow on Home icon
+task.defer(function()
+local homeIcon = frame:FindFirstChildWhichIsA("ImageLabel")
+if homeIcon then
+local iconGlow = Instance.new("UIStroke", homeIcon)
+iconGlow.Color = Color3.fromRGB(0, 200, 255)
+iconGlow.Thickness = 0
+iconGlow.Transparency = 1
+
+homeIcon.MouseEnter:Connect(function()  
+		TweenService:Create(iconGlow, TweenInfo.new(0.2), {  
+			Transparency = 0.2,  
+			Thickness = 1.5  
+		}):Play()  
+	end)  
+
+	homeIcon.MouseLeave:Connect(function()  
+		TweenService:Create(iconGlow, TweenInfo.new(0.2), {  
+			Transparency = 1,  
+			Thickness = 0  
+		}):Play()  
+	end)  
+end
+
+end)
+
+
+local shadersBtn = Instance.new("TextButton", frame)
+shadersBtn.Text = "Toggle Shaders"
+shadersBtn.Font = Enum.Font.GothamBold
+shadersBtn.TextSize = 16
+shadersBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+shadersBtn.BackgroundColor3 = Color3.fromRGB(40, 40, 80)
+shadersBtn.Position = UDim2.new(0.5, -140, 0, 235)
+shadersBtn.Size = UDim2.new(0, 280, 0, 40)
+
+Instance.new("UICorner", shadersBtn)
+
+local stroke = Instance.new("UIStroke", shadersBtn)
+stroke.Thickness = 1
+
+task.spawn(function()
+	while true do
+		for hue = 0, 1, 0.01 do
+			stroke.Color = Color3.fromHSV(hue, 1, 1)
+			task.wait(0.03)
+		end
+	end
+end)
+
+animateHover(shadersBtn)
+
+local shadersState = 0
+
+local function clearShaders()
+	for _, v in ipairs(Lighting:GetChildren()) do
+		if v:IsA("PostEffect") or v:IsA("Atmosphere") then
+			v:Destroy()
+		end
+	end
+	-- Reset Lighting to default
+	Lighting.Ambient = Color3.new(0.5, 0.5, 0.5)
+	Lighting.OutdoorAmbient = Color3.new(0.5, 0.5, 0.5)
+	Lighting.Brightness = 1
+	Lighting.ClockTime = 14
+	Lighting.EnvironmentDiffuseScale = 1
+	Lighting.EnvironmentSpecularScale = 1
+	Lighting.GlobalShadows = true
+end
+
+local function applyMorning()
+	clearShaders()
+	Lighting.Ambient = Color3.fromRGB(45, 45, 65)
+	Lighting.OutdoorAmbient = Color3.fromRGB(90, 90, 120)
+	Lighting.Brightness = 2.6
+	Lighting.EnvironmentDiffuseScale = 0.8
+	Lighting.EnvironmentSpecularScale = 1
+	Lighting.GlobalShadows = true
+	Lighting.ClockTime = 17
+
+	local bloom = Instance.new("BloomEffect", Lighting)
+	bloom.Intensity = 1.2
+	bloom.Size = 72
+	bloom.Threshold = 0.9
+
+	local colorCorrection = Instance.new("ColorCorrectionEffect", Lighting)
+	colorCorrection.Brightness = -0.05
+	colorCorrection.Contrast = 0.3
+	colorCorrection.Saturation = 0.25
+	colorCorrection.TintColor = Color3.fromRGB(200, 230, 255)
+
+	local dof = Instance.new("DepthOfFieldEffect", Lighting)
+	dof.FocusDistance = 75
+	dof.InFocusRadius = 15
+	dof.FarIntensity = 0.45
+	dof.NearIntensity = 0.35
+
+	local sunRays = Instance.new("SunRaysEffect", Lighting)
+	sunRays.Intensity = 0.15
+	sunRays.Spread = 0.25
+
+	local atmosphere = Instance.new("Atmosphere", Lighting)
+	atmosphere.Density = 0.3
+	atmosphere.Offset = 0.25
+	atmosphere.Glare = 0.2
+	atmosphere.Haze = 1
+	atmosphere.Color = Color3.fromRGB(180, 210, 255)
+	atmosphere.Decay = Color3.fromRGB(90, 110, 130)
+
+	StarterGui:SetCore("SendNotification", {
+		Title = "Shaders Activated",
+		Text = "Realistic Morning mode applied",
+		Duration = 4
+	})
+end
+
+local function applyEvening()
+	clearShaders()
+	Lighting.Ambient = Color3.fromRGB(65, 55, 50)
+	Lighting.OutdoorAmbient = Color3.fromRGB(100, 90, 80)
+	Lighting.Brightness = 2
+	Lighting.EnvironmentDiffuseScale = 0.9
+	Lighting.EnvironmentSpecularScale = 0.9
+	Lighting.GlobalShadows = true
+	Lighting.ClockTime = 18.5
+
+	local bloom = Instance.new("BloomEffect", Lighting)
+	bloom.Intensity = 1
+	bloom.Size = 65
+	bloom.Threshold = 1
+
+	local colorCorrection = Instance.new("ColorCorrectionEffect", Lighting)
+	colorCorrection.Brightness = 0
+	colorCorrection.Contrast = 0.2
+	colorCorrection.Saturation = 0.2
+	colorCorrection.TintColor = Color3.fromRGB(255, 180, 150)
+
+	local dof = Instance.new("DepthOfFieldEffect", Lighting)
+	dof.FocusDistance = 50
+	dof.InFocusRadius = 15
+	dof.FarIntensity = 0.35
+	dof.NearIntensity = 0.3
+
+	local sunRays = Instance.new("SunRaysEffect", Lighting)
+	sunRays.Intensity = 0.1
+	sunRays.Spread = 0.2
+
+	local atmosphere = Instance.new("Atmosphere", Lighting)
+	atmosphere.Density = 0.2
+	atmosphere.Offset = 0.2
+	atmosphere.Glare = 0.3
+	atmosphere.Haze = 0.8
+	atmosphere.Color = Color3.fromRGB(255, 210, 180)
+	atmosphere.Decay = Color3.fromRGB(120, 90, 70)
+
+	StarterGui:SetCore("SendNotification", {
+		Title = "Shaders Activated",
+		Text = "Evening mode applied",
+		Duration = 4
+	})
+end
+
+local function applyNormal()
+	clearShaders()
+	StarterGui:SetCore("SendNotification", {
+		Title = "Shaders Reset",
+		Text = "Lighting reset to normal",
+		Duration = 4
+	})
+end
+
+local function applyFogMist()
+	clearShaders()
+	Lighting.Ambient = Color3.fromRGB(75, 75, 75)
+	Lighting.OutdoorAmbient = Color3.fromRGB(100, 100, 100)
+	Lighting.Brightness = 1.2
+	Lighting.ClockTime = 12
+
+	local bloom = Instance.new("BloomEffect", Lighting)
+	bloom.Intensity = 0.8
+	bloom.Size = 50
+	bloom.Threshold = 1.1
+
+	local colorCorrection = Instance.new("ColorCorrectionEffect", Lighting)
+	colorCorrection.Brightness = 0.05
+	colorCorrection.Contrast = 0.15
+	colorCorrection.Saturation = 0.2
+
+	local dof = Instance.new("DepthOfFieldEffect", Lighting)
+	dof.FocusDistance = 40
+	dof.InFocusRadius = 20
+	dof.FarIntensity = 0.3
+	dof.NearIntensity = 0.3
+
+	local sunRays = Instance.new("SunRaysEffect", Lighting)
+	sunRays.Intensity = 0.1
+	sunRays.Spread = 0.2
+
+	local atmosphere = Instance.new("Atmosphere", Lighting)
+	atmosphere.Density = 0.6
+	atmosphere.Offset = 0.3
+	atmosphere.Glare = 0.4
+	atmosphere.Haze = 1
+	atmosphere.Color = Color3.fromRGB(190, 200, 210)
+	atmosphere.Decay = Color3.fromRGB(110, 120, 130)
+
+	StarterGui:SetCore("SendNotification", {
+		Title = "Shaders Activated",
+		Text = "Fog and Mist mode applied",
+		Duration = 4
+	})
+end
+
+local function applyMysticTwilight()
+	clearShaders()
+	Lighting.Ambient = Color3.fromRGB(60, 40, 60)
+	Lighting.OutdoorAmbient = Color3.fromRGB(80, 60, 90)
+	Lighting.Brightness = 1.8
+	Lighting.EnvironmentDiffuseScale = 0.7
+	Lighting.EnvironmentSpecularScale = 0.9
+	Lighting.GlobalShadows = true
+	Lighting.ClockTime = 20
+
+	local bloom = Instance.new("BloomEffect", Lighting)
+	bloom.Intensity = 1.3
+	bloom.Size = 80
+	bloom.Threshold = 0.85
+
+	local colorCorrection = Instance.new("ColorCorrectionEffect", Lighting)
+	colorCorrection.Brightness = -0.1
+	colorCorrection.Contrast = 0.35
+	colorCorrection.Saturation = 0.4
+	colorCorrection.TintColor = Color3.fromRGB(150, 100, 180)
+
+	local dof = Instance.new("DepthOfFieldEffect", Lighting)
+	dof.FocusDistance = 70
+	dof.InFocusRadius = 20
+	dof.FarIntensity = 0.5
+	dof.NearIntensity = 0.4
+
+	local sunRays = Instance.new("SunRaysEffect", Lighting)
+	sunRays.Intensity = 0.2
+	sunRays.Spread = 0.3
+
+	local atmosphere = Instance.new("Atmosphere", Lighting)
+	atmosphere.Density = 0.35
+	atmosphere.Offset = 0.3
+	atmosphere.Glare = 0.25
+	atmosphere.Haze = 1
+	atmosphere.Color = Color3.fromRGB(140, 90, 160)
+	atmosphere.Decay = Color3.fromRGB(70, 40, 90)
+
+	StarterGui:SetCore("SendNotification", {
+		Title = "Shaders Activated",
+		Text = "Mystic Twilight mode applied",
+		Duration = 4
+	})
+end
+
+shadersBtn.MouseButton1Click:Connect(function()
+	shadersState = shadersState + 1
+	if shadersState > 5 then
+		shadersState = 1
+	end
+
+	if shadersState == 1 then
+		applyMorning()
+		shadersBtn.Text = "Shader: Morning"
+	elseif shadersState == 2 then
+		applyEvening()
+		shadersBtn.Text = "Shader: Evening"
+	elseif shadersState == 3 then
+		applyNormal()
+		shadersBtn.Text = "Shader: Normal"
+	elseif shadersState == 4 then
+		applyFogMist()
+		shadersBtn.Text = "Shader: Fog & Mist"
+	elseif shadersState == 5 then
+		applyMysticTwilight()
+		shadersBtn.Text = "Shader: Mystic Twilight"
+
+	end
+end)
+
+-- Simple Blacklist Auto-Kick System
+
+-- List of blacklisted usernames (case-insensitive)
+local blacklist = {
+    "xc_me4",
+    "AnnoyingKid",
+    "Spammer001"
+}
+
+-- Kick blacklisted players if they join
+game.Players.PlayerAdded:Connect(function(player)
+    for _, name in ipairs(blacklist) do
+        if player.Name:lower() == name:lower() then
+            player:Kick("You are blacklisted from OblivynX.")
+        end
+    end
+end)
+
+-- Also check current players in case they already joined
+for _, player in ipairs(game.Players:GetPlayers()) do
+    for _, name in ipairs(blacklist) do
+        if player.Name:lower() == name:lower() then
+            player:Kick("You are blacklisted from OblivynX.")
+        end
+    end
+end
+-- Keep your entire existing OBLIVYNX HUB code here
+-- ↓↓↓ ADD THE FOLLOWING CODE BLOCK AT THE BOTTOM ↓↓↓
+
+
+--// OBLIVYNX SETTINGS SYSTEM ------------------
+
+local currentPrefix = "!" -- Default chat command prefix
+local themeColor = Color3.fromRGB(40, 40, 80)
+
+-- Apply theme color function (to buttons only)
+local function applyThemeColor()
+	for _, v in ipairs(frame:GetChildren()) do
+		if v:IsA("TextButton") then
+			v.BackgroundColor3 = themeColor
+		end
+	end
+end
+
+-- Settings Button
+local settingsBtn = Instance.new("TextButton", frame)
+settingsBtn.Text = "⚙️ Settings"
+settingsBtn.Font = Enum.Font.GothamBold
+settingsBtn.TextSize = 16
+settingsBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+settingsBtn.BackgroundColor3 = themeColor
+settingsBtn.Position = UDim2.new(0.5, -140, 0, 285)
+settingsBtn.Size = UDim2.new(0, 280, 0, 40)
+Instance.new("UICorner", settingsBtn)
+
+local stroke = Instance.new("UIStroke", settingsBtn)
+stroke.Thickness = 1
+task.spawn(function()
+	while true do
+		for hue = 0, 1, 0.01 do
+			stroke.Color = Color3.fromHSV(hue, 1, 1)
+			task.wait(0.03)
+		end
+	end
+end)
+
+animateHover(settingsBtn)
+
+-- Settings Panel
+local settingsPanel = Instance.new("Frame", frame)
+settingsPanel.BackgroundColor3 = Color3.fromRGB(25, 25, 40)
+settingsPanel.Size = UDim2.new(0, 280, 0, 120)
+settingsPanel.Position = UDim2.new(0.5, -140, 0, 335)
+settingsPanel.Visible = false
+Instance.new("UICorner", settingsPanel)
+Instance.new("UIStroke", settingsPanel).Thickness = 1
+
+-- Theme Color Label
+local themeLabel = Instance.new("TextLabel", settingsPanel)
+themeLabel.Text = "Theme Color (RGB):"
+themeLabel.Font = Enum.Font.Gotham
+themeLabel.TextSize = 14
+themeLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+themeLabel.BackgroundTransparency = 1
+themeLabel.Size = UDim2.new(1, -10, 0, 20)
+themeLabel.Position = UDim2.new(0, 5, 0, 5)
+themeLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Theme Color TextBox
+local themeBox = Instance.new("TextBox", settingsPanel)
+themeBox.Text = "40,40,80"
+themeBox.PlaceholderText = "R,G,B"
+themeBox.Font = Enum.Font.Gotham
+themeBox.TextSize = 14
+themeBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+themeBox.BackgroundColor3 = Color3.fromRGB(50, 50, 100)
+themeBox.Position = UDim2.new(0, 5, 0, 25)
+themeBox.Size = UDim2.new(1, -10, 0, 20)
+Instance.new("UICorner", themeBox)
+
+-- Prefix Label
+local prefixLabel = Instance.new("TextLabel", settingsPanel)
+prefixLabel.Text = "Chat Command Prefix:"
+prefixLabel.Font = Enum.Font.Gotham
+prefixLabel.TextSize = 14
+prefixLabel.TextColor3 = Color3.fromRGB(200, 200, 255)
+prefixLabel.BackgroundTransparency = 1
+prefixLabel.Size = UDim2.new(1, -10, 0, 20)
+prefixLabel.Position = UDim2.new(0, 5, 0, 50)
+prefixLabel.TextXAlignment = Enum.TextXAlignment.Left
+
+-- Prefix TextBox
+local prefixBox = Instance.new("TextBox", settingsPanel)
+prefixBox.Text = "!"
+prefixBox.PlaceholderText = "!"
+prefixBox.Font = Enum.Font.Gotham
+prefixBox.TextSize = 14
+prefixBox.TextColor3 = Color3.fromRGB(255, 255, 255)
+prefixBox.BackgroundColor3 = Color3.fromRGB(50, 50, 100)
+prefixBox.Position = UDim2.new(0, 5, 0, 70)
+prefixBox.Size = UDim2.new(1, -10, 0, 20)
+Instance.new("UICorner", prefixBox)
+
+-- Apply Button
+local applyBtn = Instance.new("TextButton", settingsPanel)
+applyBtn.Text = "Apply"
+applyBtn.Font = Enum.Font.GothamBold
+applyBtn.TextSize = 14
+applyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+applyBtn.BackgroundColor3 = themeColor
+applyBtn.Position = UDim2.new(0.5, -40, 0, 95)
+applyBtn.Size = UDim2.new(0, 80, 0, 20)
+Instance.new("UICorner", applyBtn)
+animateHover(applyBtn)
+
+applyBtn.MouseButton1Click:Connect(function()
+	local r, g, b = string.match(themeBox.Text, "(%d+),%s*(%d+),%s*(%d+)")
+	if r and g and b then
+		themeColor = Color3.fromRGB(tonumber(r), tonumber(g), tonumber(b))
+		applyThemeColor()
+	end
+	if prefixBox.Text and prefixBox.Text ~= "" then
+		currentPrefix = prefixBox.Text
+	end
+	StarterGui:SetCore("SendNotification", {
+		Title = "Settings Applied",
+		Text = "Theme and prefix updated!",
+		Duration = 3
+	})
+end)
+
+settingsBtn.MouseButton1Click:Connect(function()
+	settingsPanel.Visible = not settingsPanel.Visible
+end)
+
+-- View Commands Button
+local viewCmdBtn = Instance.new("TextButton")
+viewCmdBtn.Size = UDim2.new(0, 160, 0, 30)
+viewCmdBtn.Position = UDim2.new(0, 10, 0, 120) -- Adjust if overlapping
+viewCmdBtn.Text = "📄 View Commands"
+viewCmdBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+viewCmdBtn.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
+viewCmdBtn.Font = Enum.Font.Gotham
+viewCmdBtn.TextSize = 14
+viewCmdBtn.Parent = settingsPanel
+
+-- Commands Box
+local commandsBox = Instance.new("ScrollingFrame")
+commandsBox.Size = UDim2.new(0, 180, 0, 100)
+commandsBox.Position = UDim2.new(0, 10, 0, 150)
+commandsBox.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
+commandsBox.BorderSizePixel = 0
+commandsBox.ScrollBarThickness = 5
+commandsBox.Visible = false
+commandsBox.Parent = settingsPanel
+
+-- Sample Commands Text
+local commandsText = Instance.new("TextLabel")
+commandsText.Size = UDim2.new(1, -10, 0, 200)
+commandsText.Position = UDim2.new(0, 5, 0, 0)
+commandsText.BackgroundTransparency = 1
+commandsText.TextColor3 = Color3.fromRGB(200, 200, 200)
+commandsText.TextWrapped = true
+commandsText.TextYAlignment = Enum.TextYAlignment.Top
+commandsText.Text = "!spam (spam panel )\n!morning\n!iy\n!anti (protection)\n!evening\n!normal\n!twilight\n!fog\n"
+commandsText.Font = Enum.Font.Code
+commandsText.TextSize = 14
+commandsText.Parent = commandsBox
+
+-- Toggle Behavior
+viewCmdBtn.MouseButton1Click:Connect(function()
+	commandsBox.Visible = not commandsBox.Visible
+end)
+
+--// CHAT COMMANDS SYSTEM ----------------------
+
+LocalPlayer.Chatted:Connect(function(msg)
+	msg = msg:lower()
+
+	if msg == currentPrefix .. "spam" then
+		loadstring(game:HttpGet("https://pastefy.app/qsIbNQPZ/raw"))()
+	elseif msg == currentPrefix .. "anti" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/LORLN9/LORLN-PRO/main/Anit%20CMD"))()
+
+	elseif msg == currentPrefix .. "iy" then
+		loadstring(game:HttpGet("https://raw.githubusercontent.com/EdgeIY/infiniteyield/master/source"))()
+
+	elseif msg == currentPrefix .. "morning" then
+		shadersState = 1
+		applyMorning()
+
+	elseif msg == currentPrefix .. "evening" then
+		shadersState = 2
+		applyEvening()
+
+	elseif msg == currentPrefix .. "normal" then
+		shadersState = 3
+		applyNormal()
+
+	elseif msg == currentPrefix .. "fog" then
+		shadersState = 4
+		applyFogMist()
+
+	elseif msg == currentPrefix .. "twilight" then
+		shadersState = 5
+		applyMysticTwilight()
+
+	end
+end)
