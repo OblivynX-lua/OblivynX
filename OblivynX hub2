@@ -1,0 +1,1 @@
+loadstring(game:HttpGet("https://raw.githubusercontent.com/OblivynX-lua/OblivynX/refs/heads/main/OblivynX%20hub%20v3"))()
